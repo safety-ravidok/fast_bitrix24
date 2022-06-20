@@ -87,9 +87,6 @@ class ServerRequestHandler:
         if not _url_valid(webhook):
             raise ValueError("Webhook is not a valid URL")
 
-        if webhook[-1] != "/":
-            webhook += "/"
-
         return webhook
 
     async def run_async(self, coroutine):
@@ -140,7 +137,7 @@ class ServerRequestHandler:
             async with self.acquire():
                 logger.debug(f"Requesting {{'method': {method}, 'params': {params}}}")
                 async with self.session.post(
-                    url=self.webhook + method, json=params
+                    url=self.webhook.replace('#method#', method), json=params
                 ) as response:
                     json = await response.json(encoding="utf-8")
                     logger.debug("Response: %s", json)
